@@ -1,0 +1,69 @@
+﻿@using PostaKutusuServisi.Entities
+@model List<UserMessage>
+@{
+    ViewData["Title"] = "Gelen Kutusu";
+
+    var filter = (PostaKutusuServisi.DTOs.UserMessageDto.MessageFilterDto)ViewBag.Filter;
+
+    var hasAnyFilter = !string.IsNullOrWhiteSpace(filter.Search)
+                    || !string.IsNullOrWhiteSpace(filter.ReadStatus)
+                    || filter.OnlyImportant
+                    || filter.CategoryId.HasValue
+                    || filter.StartDate.HasValue
+                    || filter.EndDate.HasValue;
+}
+
+<div class="mx-auto w-full max-w-4xl">
+
+    <!-- üst başlık -->
+    @await Component.InvokeAsync("_UserMessageUstBaslik", new
+    {
+        fullName = (string)ViewBag.fullName,
+        unreadCount = Model.Count(m => !m.IsRead)
+    })
+
+    @await Component.InvokeAsync("_MessageFilterBar", new
+    {
+            filter = (PostaKutusuServisi.DTOs.UserMessageDto.MessageFilterDto)ViewBag.Filter,
+            action = "Index"
+    })
+
+    @await Component.InvokeAsync("_Pagination", new
+    {
+        filter = (PostaKutusuServisi.DTOs.UserMessageDto.MessageFilterDto)ViewBag.Filter,
+        totalPages = (int)ViewBag.TotalPages,
+        totalCount = (int)ViewBag.TotalCount,
+        action = "Index"
+    })
+
+
+    @if (!Model.Any())
+    {
+        @if (!hasAnyFilter)
+        {
+            @await Component.InvokeAsync("_UserMessageBosBoxDurumu")
+        }
+        else
+        {
+            <div class="rounded-xl border border-dashed border-outline-variant bg-surface-container-lowest px-6 py-12 text-center">
+                <h2 class="text-headline-sm text-on-surface">Sonuç bulunamadı</h2>
+                <p class="mt-2 text-body-sm text-on-surface-variant">
+                    Arama veya filtre koşullarınıza uyan mesaj yok. Filtreleri temizleyip tekrar deneyin.
+                </p>
+            </div>
+        }
+    }
+    else
+    {
+        @await Component.InvokeAsync("_UserMessageList", new { messages = Model })
+
+        @await Component.InvokeAsync("_Pagination", new
+        {
+            filter = (PostaKutusuServisi.DTOs.UserMessageDto.MessageFilterDto)ViewBag.Filter,
+            totalPages = (int)ViewBag.TotalPages,
+            totalCount = (int)ViewBag.TotalCount
+        })
+    }
+
+
+</div>

@@ -1,0 +1,130 @@
+﻿@model List<PostaKutusuServisi.Models.AdminReportListItemViewModel>
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var showResolved = (bool)ViewBag.ShowResolved;
+    var pendingCount = (int)ViewBag.PendingCount;
+
+    string ReasonText(string reason) => reason switch
+    {
+        "Spam" => "İstenmeyen içerik",
+        "Harassment" => "Taciz veya hakaret",
+        "Inappropriate" => "Uygunsuz içerik",
+        _ => "Diğer"
+    };
+}
+
+<div class="mx-auto w-full max-w-4xl">
+
+    <div class="mb-stack-lg flex flex-col gap-stack-sm sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-headline-md text-on-surface">Şikayetler</h1>
+            <p class="mt-1 text-body-sm text-on-surface-variant">
+                @pendingCount bekleyen şikayet
+            </p>
+        </div>
+
+        <div class="flex gap-2">
+            <a asp-controller="Admin" asp-action="Reports" asp-route-showResolved="@(!showResolved)"
+               class="rounded-lg border border-outline-variant px-4 py-2 text-center text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface">
+                @(showResolved ? "Yalnızca bekleyenler" : "Çözülenleri de göster")
+            </a>
+
+            <a asp-controller="Admin" asp-action="Index"
+               class="rounded-lg border border-outline-variant px-4 py-2 text-center text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface">
+                Panele dön
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["AdminSuccess"] is not null)
+    {
+        <div class="mb-stack-md flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 p-stack-md text-body-sm text-primary">
+            <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            @TempData["AdminSuccess"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="rounded-xl border border-dashed border-outline-variant bg-surface-container-lowest px-6 py-12 text-center">
+            <svg class="mx-auto mb-4 h-12 w-12 text-outline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h2 class="text-headline-sm text-on-surface">
+                @(showResolved ? "Hiç şikayet yok" : "Bekleyen şikayet yok")
+            </h2>
+            <p class="mt-2 text-body-sm text-on-surface-variant">
+                Kullanıcılar bir mesajı şikayet ettiğinde burada listelenir.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="flex flex-col gap-stack-md">
+
+            @foreach (var report in Model)
+            {
+                <div class="rounded-xl border bg-surface-container-lowest p-stack-md @(report.IsResolved ? "border-outline-variant" : "border-error/40")">
+
+                    <!-- üst bilgi -->
+                    <div class="mb-stack-sm flex flex-wrap items-center gap-2">
+                        <span class="rounded-full px-2 py-0.5 text-label-sm @(report.IsResolved ? "bg-surface-container-high text-on-surface-variant" : "bg-error-container text-on-error-container")">
+                            @ReasonText(report.Reason)
+                        </span>
+
+                        @if (report.IsResolved)
+                        {
+                            <span class="rounded-full border border-outline-variant px-2 py-0.5 text-label-sm text-outline">Çözüldü</span>
+                        }
+
+                        <span class="ml-auto text-label-sm text-outline">
+                            @report.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        </span>
+                    </div>
+
+                    <!-- şikayet eden -->
+                    <p class="mb-stack-sm text-body-sm text-on-surface-variant">
+                        <span class="text-outline">Şikayet eden:</span> @report.ReporterName
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(report.Description))
+                    {
+                        <p class="mb-stack-sm rounded-lg bg-surface-container-low p-stack-sm text-body-sm italic text-on-surface-variant">
+                            &ldquo;@report.Description&rdquo;
+                        </p>
+                    }
+
+                    <!-- şikayet edilen mesaj -->
+                    <div class="rounded-lg border border-outline-variant bg-surface-container-low p-stack-md">
+                        <div class="mb-1 flex flex-wrap gap-x-4 gap-y-1 text-label-sm text-outline">
+                            <span>Gönderen: <span class="text-on-surface-variant">@report.SenderName</span></span>
+                            <span>Alıcı: <span class="text-on-surface-variant">@report.ReceiverName</span></span>
+                        </div>
+
+                        <p class="mb-1 text-label-md text-on-surface">@report.MessageSubject</p>
+
+                        <p class="whitespace-pre-wrap break-words text-body-sm text-on-surface-variant">@report.MessageBody</p>
+                    </div>
+
+                    <!-- işlem -->
+                    <div class="mt-stack-sm flex justify-end">
+                        <form asp-controller="Admin" asp-action="ResolveReport" method="post">
+                            <input type="hidden" name="id" value="@report.Id" />
+                            <input type="hidden" name="showResolved" value="@showResolved.ToString().ToLower()" />
+                            <button type="submit"
+                                    class="rounded-lg border px-4 py-2 text-label-md transition-colors @(report.IsResolved ? "border-outline-variant text-on-surface-variant hover:bg-surface-container-high" : "border-primary/40 text-primary hover:bg-primary/10")">
+                                @(report.IsResolved ? "Yeniden aç" : "Çözüldü olarak işaretle")
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

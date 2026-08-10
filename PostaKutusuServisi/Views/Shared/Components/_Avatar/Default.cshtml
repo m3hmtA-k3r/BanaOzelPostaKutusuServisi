@@ -1,0 +1,32 @@
+﻿@*
+    _AvatarViewComponent.cs 
+*@
+
+@model PostaKutusuServisi.Models.AvatarViewModel
+
+@{
+    var sizeClass = Model.Size switch
+    {
+        "sm" => "h-9 w-9 text-label-sm",
+        "lg" => "h-20 w-20 text-headline-sm",
+        _ => "h-10 w-10 text-label-md"
+    };
+
+    var colorClass = Model.Variant == "primary"
+        ? "bg-primary-container text-white"
+        : "bg-surface-container-high text-on-surface";
+
+    var initials = $"{Model.User.FirstName.Substring(0, 1)}{Model.User.LastName.Substring(0, 1)}";
+}
+
+@if (!string.IsNullOrEmpty(Model.User.ProfileImageUrl))
+{
+    <img src="@Model.User.ProfileImageUrl" alt="@Model.User.FirstName @Model.User.LastName"
+         class="@sizeClass shrink-0 rounded-full object-cover" />
+}
+else
+{
+    <div class="@sizeClass @colorClass flex shrink-0 items-center justify-center rounded-full">
+        <span>@initials</span>
+    </div>
+}

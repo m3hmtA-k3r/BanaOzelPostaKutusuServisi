@@ -1,0 +1,155 @@
+﻿@model PostaKutusuServisi.DTOs.UserDtos.ProfileEditDto
+@{
+    ViewData["Title"] = "Profilim";
+    var user = (PostaKutusuServisi.Entities.AppUser)ViewBag.User;
+
+    var inputClass = "w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface transition-shadow placeholder:text-outline focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary";
+    var labelClass = "text-label-md text-on-surface";
+}
+
+<div class="mx-auto w-full max-w-2xl">
+
+    <div class="mb-stack-lg">
+        <h1 class="text-headline-md text-on-surface">Profilim</h1>
+        <p class="mt-1 text-body-sm text-on-surface-variant">Hesap bilgilerinizi buradan güncelleyebilirsiniz.</p>
+    </div>
+
+    <!-- ================= PROFİL BİLGİLERİ ================= -->
+    <div class="mb-stack-lg rounded-xl border border-outline-variant bg-surface-container-lowest p-stack-lg">
+
+        <h2 class="mb-stack-md text-headline-sm text-on-surface">Hesap Bilgileri</h2>
+
+        @if (TempData["ProfileSuccess"] is not null)
+        {
+            <div class="mb-stack-md flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 p-stack-md text-body-sm text-primary">
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                @TempData["ProfileSuccess"]
+            </div>
+        }
+
+        @if (TempData["ProfileError"] is not null)
+        {
+            <div class="mb-stack-md flex items-center gap-2 rounded-lg border border-error bg-error-container p-stack-md text-body-sm text-on-error-container">
+                <svg class="h-5 w-5 shrink-0 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                @TempData["ProfileError"]
+            </div>
+        }
+
+        <form asp-controller="Profile" asp-action="UpdateProfile" method="post"
+              enctype="multipart/form-data" class="flex flex-col gap-stack-md">
+
+            <!-- avatar + dosya seçimi -->
+            <div class="flex items-center gap-4">
+
+                @await Component.InvokeAsync("_Avatar", new { user = user, size = "lg", variant = "primary" })
+
+                <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                    <label asp-for="ProfileImage" class="@labelClass">Profil Fotoğrafı</label>
+                    <input asp-for="ProfileImage" type="file" accept=".jpg,.jpeg,.png,.webp"
+                           class="w-full text-body-sm text-on-surface-variant file:mr-3 file:rounded-lg file:border-0 file:bg-surface-container-high file:px-4 file:py-2 file:text-label-md file:text-on-surface hover:file:bg-surface-container-highest" />
+                    <span class="text-label-sm text-outline">jpg, png veya webp &middot; en fazla 2 MB</span>
+                </div>
+
+            </div>
+
+
+            <!-- ad & soyad -->
+            <div class="flex flex-col gap-stack-md md:flex-row">
+                <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                    <label asp-for="FirstName" class="@labelClass">Ad</label>
+                    <input asp-for="FirstName" type="text" required class="@inputClass" />
+                </div>
+
+                <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                    <label asp-for="LastName" class="@labelClass">Soyad</label>
+                    <input asp-for="LastName" type="text" required class="@inputClass" />
+                </div>
+            </div>
+
+            <!-- değiştirilemeyen alanlar -->
+            <div class="flex flex-col gap-stack-md md:flex-row">
+                <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                    <label class="@labelClass">Kullanıcı Adı</label>
+                    <input type="text" value="@user.UserName" disabled
+                           class="@inputClass cursor-not-allowed opacity-60" />
+                </div>
+
+                <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                    <label class="@labelClass">E-posta</label>
+                    <input type="text" value="@user.Email" disabled
+                           class="@inputClass cursor-not-allowed opacity-60" />
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="rounded-lg bg-primary-container px-5 py-2.5 text-label-md text-white transition-all hover:opacity-90 active:scale-[0.98]">
+                    Kaydet
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- ================= ŞİFRE DEĞİŞTİRME ================= -->
+    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-stack-lg">
+
+        <h2 class="mb-stack-md text-headline-sm text-on-surface">Şifre Değiştir</h2>
+
+        @if (TempData["PasswordSuccess"] is not null)
+        {
+            <div class="mb-stack-md flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 p-stack-md text-body-sm text-primary">
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                @TempData["PasswordSuccess"]
+            </div>
+        }
+
+        @if (TempData["PasswordError"] is not null)
+        {
+            <div class="mb-stack-md flex items-start gap-2 rounded-lg border border-error bg-error-container p-stack-md text-body-sm text-on-error-container">
+                <svg class="h-5 w-5 shrink-0 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                @TempData["PasswordError"]
+            </div>
+        }
+
+        <form asp-controller="Profile" asp-action="ChangePassword" method="post" class="flex flex-col gap-stack-md">
+
+            <div class="flex flex-col gap-stack-sm">
+                <label class="@labelClass">Mevcut Şifre</label>
+                <input type="password" name="CurrentPassword" required autocomplete="current-password"
+                       placeholder="Şu anki şifreniz" class="@inputClass" />
+            </div>
+
+            <div class="flex flex-col gap-stack-md md:flex-row">
+                <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                    <label class="@labelClass">Yeni Şifre</label>
+                    <input type="password" name="NewPassword" required autocomplete="new-password"
+                           placeholder="En az 6 karakter" class="@inputClass" />
+                </div>
+
+                <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                    <label class="@labelClass">Yeni Şifre (Tekrar)</label>
+                    <input type="password" name="ConfirmNewPassword" required autocomplete="new-password"
+                           placeholder="Yeni şifrenizi tekrar girin" class="@inputClass" />
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="rounded-lg border border-outline-variant px-5 py-2.5 text-label-md text-on-surface transition-colors hover:bg-surface-container-high">
+                    Şifreyi Değiştir
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>

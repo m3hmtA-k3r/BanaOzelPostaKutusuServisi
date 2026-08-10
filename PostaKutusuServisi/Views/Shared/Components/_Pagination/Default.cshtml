@@ -1,0 +1,104 @@
+﻿@model PostaKutusuServisi.Models.PaginationViewModel
+
+@{
+    var currentPage = Model.Filter.Page;
+
+    string PageUrl(int page) => Url.Action(Model.Action, "Message", new
+    {
+        search = Model.Filter.Search,
+        readStatus = Model.Filter.ReadStatus,
+        onlyImportant = Model.Filter.OnlyImportant,
+        categoryId = Model.Filter.CategoryId,
+        startDate = Model.Filter.StartDate?.ToString("yyyy-MM-dd"),
+        endDate = Model.Filter.EndDate?.ToString("yyyy-MM-dd"),
+        sort = Model.Filter.Sort,
+        page = page
+    });
+
+
+    var windowStart = Math.Max(1, currentPage - 2);
+    var windowEnd = Math.Min(Model.TotalPages, currentPage + 2);
+
+    var pageBase = "flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-label-md transition-colors";
+    var pageActive = $"{pageBase} bg-primary-container text-white";
+    var pagePassive = $"{pageBase} border border-outline-variant text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface";
+    var pageDisabled = $"{pageBase} border border-outline-variant text-outline cursor-not-allowed opacity-50";
+}
+
+@if (Model.TotalPages > 1)
+{
+    <div class="mt-stack-md flex flex-col items-center justify-between gap-stack-sm sm:flex-row">
+
+        <span class="text-body-sm text-on-surface-variant">
+            Sayfa @currentPage / @Model.TotalPages &middot; toplam @Model.TotalCount mesaj
+        </span>
+
+        <div class="flex items-center gap-1">
+
+            @if (currentPage > 1)
+            {
+                <a href="@PageUrl(currentPage - 1)" class="@pagePassive" aria-label="Önceki sayfa">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <span class="@pageDisabled">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </span>
+            }
+
+            @if (windowStart > 1)
+            {
+                <a href="@PageUrl(1)" class="@pagePassive">1</a>
+                @if (windowStart > 2)
+                {
+                    <span class="px-1 text-outline">&hellip;</span>
+                }
+            }
+
+            @for (int i = windowStart; i <= windowEnd; i++)
+            {
+                @if (i == currentPage)
+                {
+                    <span class="@pageActive">@i</span>
+                }
+                else
+                {
+                    <a href="@PageUrl(i)" class="@pagePassive">@i</a>
+                }
+            }
+
+            @if (windowEnd < Model.TotalPages)
+            {
+                @if (windowEnd < Model.TotalPages - 1)
+                {
+                    <span class="px-1 text-outline">&hellip;</span>
+                }
+                <a href="@PageUrl(Model.TotalPages)" class="@pagePassive">@Model.TotalPages</a>
+            }
+
+            @if (currentPage < Model.TotalPages)
+            {
+                <a href="@PageUrl(currentPage + 1)" class="@pagePassive" aria-label="Sonraki sayfa">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <span class="@pageDisabled">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </span>
+            }
+
+        </div>
+    </div>
+}

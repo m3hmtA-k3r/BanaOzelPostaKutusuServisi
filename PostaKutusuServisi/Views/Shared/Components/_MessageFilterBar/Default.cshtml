@@ -1,0 +1,105 @@
+﻿@model PostaKutusuServisi.Models.MessageFilterBarViewModel
+
+
+@{
+    var f = Model.Filter;
+
+    var inputClass = "w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-sm text-on-surface transition-shadow placeholder:text-outline focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary";
+
+    var hasFilter = !string.IsNullOrWhiteSpace(f.Search)
+                 || !string.IsNullOrWhiteSpace(f.ReadStatus)
+                 || f.OnlyImportant
+                 || f.CategoryId.HasValue
+                 || f.StartDate.HasValue
+                 || f.EndDate.HasValue
+                 || f.Sort == "oldest";
+
+}
+
+
+<form asp-controller="Message" asp-action="@Model.Action" method="get"
+      class="mb-stack-md rounded-xl border border-outline-variant bg-surface-container-lowest p-stack-md">
+
+
+    <!-- arama + gönder -->
+    <div class="flex flex-col gap-stack-sm sm:flex-row">
+
+        <div class="relative min-w-0 flex-1">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg class="h-4 w-4 text-outline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input asp-for="Filter.Search" name="Search" type="text" placeholder="Konu, içerik veya gönderen ara..."
+                   class="@inputClass pl-9" />
+        </div>
+
+        <button type="submit"
+                class="shrink-0 rounded-lg bg-primary-container px-5 py-2 text-label-md text-white transition-all hover:opacity-90 active:scale-[0.98]">
+            Ara
+        </button>
+
+        @if (hasFilter)
+        {
+            <a asp-controller="Message" asp-action="@Model.Action"
+               class="shrink-0 rounded-lg border border-outline-variant px-5 py-2 text-center text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface">
+                Temizle
+            </a>
+        }
+
+    </div>
+
+
+    <!-- filtreler -->
+    <div class="mt-stack-sm grid grid-cols-1 gap-stack-sm sm:grid-cols-2 lg:grid-cols-5">
+
+        <div class="flex flex-col gap-1">
+            <label asp-for="Filter.ReadStatus" class="text-label-sm text-on-surface-variant">Okunma durumu</label>
+            <select asp-for="Filter.ReadStatus" class="@inputClass">
+                <option value="">Tümü</option>
+                <option value="unread">Okunmamış</option>
+                <option value="read">Okunmuş</option>
+            </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label asp-for="Filter.CategoryId" class="text-label-sm text-on-surface-variant">Kategori</label>
+            <select asp-for="Filter.CategoryId" name="CategoryId" class="@inputClass">
+                <option value="">Tümü</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+
+
+        <div class="flex flex-col gap-1">
+            <label asp-for="Filter.Sort" class="text-label-sm text-on-surface-variant">Sıralama</label>
+            <select asp-for="Filter.Sort" class="@inputClass">
+                <option value="">Önce yeni</option>
+                <option value="oldest">Önce eski</option>
+            </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label asp-for="Filter.StartDate" class="text-label-sm text-on-surface-variant">Başlangıç</label>
+            <input asp-for="Filter.StartDate" type="date" asp-format="{0:yyyy-MM-dd}" class="@inputClass" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label asp-for="Filter.EndDate" class="text-label-sm text-on-surface-variant">Bitiş</label>
+            <input asp-for="Filter.EndDate" type="date" asp-format="{0:yyyy-MM-dd}" class="@inputClass" />
+        </div>
+
+    </div>
+
+    <!-- önemli -->
+    <label class="mt-stack-sm flex w-fit cursor-pointer items-center gap-2 text-body-sm text-on-surface-variant">
+        <input asp-for="Filter.OnlyImportant" type="checkbox"
+               class="h-4 w-4 rounded border-outline-variant bg-surface-container-lowest text-primary focus:ring-2 focus:ring-primary" />
+        Yalnızca yıldızlı mesajlar
+    </label>
+
+</form>

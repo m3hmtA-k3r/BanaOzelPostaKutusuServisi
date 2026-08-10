@@ -1,0 +1,115 @@
+﻿@using PostaKutusuServisi.DTOs.UserDtos
+@model RegisterUserDto
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="relative flex items-center justify-center overflow-hidden py-4">
+
+    <!-- arka plan ışığı -->
+    <div class="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-30">
+        <div class="h-[800px] w-[800px] rounded-full bg-primary-fixed opacity-20 blur-3xl"></div>
+    </div>
+
+    <!-- kayıt kartı -->
+    <div class="relative z-10 flex w-full max-w-lg flex-col gap-stack-lg rounded-xl border border-outline-variant bg-surface-container-lowest p-stack-lg">
+
+        <!-- başlık -->
+        <div class="flex flex-col items-center text-center">
+            <svg class="mb-2 h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 8l8.89 5.93a2 2 0 002.22 0L23 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <h1 class="text-headline-lg text-primary">PostaKutusuServisi</h1>
+            <p class="mt-1 text-body-md text-secondary">Güvenli iletişime katılın</p>
+        </div>
+
+        <!-- toplu hata alanı -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div role="alert" class="flex flex-col gap-unit rounded-lg border border-error bg-error-container p-stack-md">
+                <div class="mb-1 flex items-center gap-2">
+                    <svg class="h-5 w-5 shrink-0 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-label-md text-on-error-container">Lütfen aşağıdaki hataları düzeltin:</span>
+                </div>
+                <ul class="list-inside list-disc space-y-1 pl-1 text-body-sm text-on-error-container">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+       <div>
+            <!-- form -->
+            <form method="post" class="flex flex-col gap-stack-md">
+
+                <!-- ad & soyad -->
+                <div class="flex flex-col gap-stack-md md:flex-row">
+                    <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                        <label asp-for="FirstName" class="text-label-md text-on-surface">Ad</label>
+                        <input asp-for="FirstName" type="text" placeholder="Adınız" required
+                               class="w-full rounded border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface transition-all placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-surface-container-lowest" />
+                    </div>
+
+                    <div class="flex min-w-0 flex-1 flex-col gap-stack-sm">
+                        <label asp-for="LastName" class="text-label-md text-on-surface">Soyad</label>
+                        <input asp-for="LastName" type="text" placeholder="Soyadınız" required
+                               class="w-full rounded border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface transition-all placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-surface-container-lowest" />
+                    </div>
+                </div>
+
+
+                <!-- kullanıcı adı -->
+                <div class="flex flex-col gap-stack-sm">
+                    <label asp-for="UserName" class="text-label-md text-on-surface">Kullanıcı Adı</label>
+                    <input asp-for="UserName" type="text" placeholder="kullanici_adi" required
+                           class="rounded border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface transition-all placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-surface-container-lowest" />
+                </div>
+
+                <!-- e-posta -->
+                <div class="flex flex-col gap-stack-sm">
+                    <label asp-for="Email" class="text-label-md text-on-surface">E-posta</label>
+                    <input asp-for="Email" type="email" placeholder="ornek@sirket.com" required
+                           class="rounded border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface transition-all placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-surface-container-lowest" />
+                </div>
+
+                <!-- şifre -->
+                <div class="flex flex-col gap-stack-sm">
+                    <label asp-for="Password" class="text-label-md text-on-surface">Şifre</label>
+                    <input asp-for="Password" type="password" placeholder="••••••••" required
+                           class="rounded border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface transition-all placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-surface-container-lowest" />
+                </div>
+
+                <!-- şifre tekrar -->
+                <div class="flex flex-col gap-stack-sm">
+                    <label asp-for="ConfirmedPassword" class="text-label-md text-on-surface">Şifreyi Onayla</label>
+                    <input asp-for="ConfirmedPassword" type="password" placeholder="••••••••" required
+                           class="rounded border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface transition-all placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-surface-container-lowest" />
+                </div>
+
+                <!-- gönder -->
+                <button type="submit"
+                        class="mt-4 flex w-full items-center justify-center gap-2 rounded bg-primary py-3 text-label-md text-on-primary transition-colors duration-200 hover:bg-primary-fixed">
+                    Kayıt Ol
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </button>
+
+                <!-- alt bağlantı -->
+                <div class="mt-stack-sm text-center">
+                    <a asp-controller="Auth" asp-action="Login"
+                       class="text-label-md text-secondary transition-colors duration-200 hover:text-primary">
+                        Zaten hesabın var mı? Giriş yap
+                    </a>
+                </div>
+
+            </form>
+       </div>
+    </div>
+</div>

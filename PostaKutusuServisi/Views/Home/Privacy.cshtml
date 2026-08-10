@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Gizlilik";
+}
+
+<div class="mx-auto w-full max-w-3xl">
+
+    <div class="mb-stack-lg">
+        <h1 class="text-headline-lg text-on-surface">Gizlilik Politikası</h1>
+        <p class="mt-2 text-body-sm text-on-surface-variant">Son güncelleme: @DateTime.Now.ToString("MMMM yyyy")</p>
+    </div>
+
+    <div class="flex flex-col gap-stack-md rounded-xl border border-outline-variant bg-surface-container-lowest p-stack-lg">
+
+        <section>
+            <h2 class="mb-2 text-headline-sm text-on-surface">Toplanan Bilgiler</h2>
+            <p class="text-body-md leading-relaxed text-on-surface-variant">
+                PostaKutusuServisi yalnızca hesap oluştururken verdiğiniz bilgileri saklar:
+                ad, soyad, kullanıcı adı ve e-posta adresi. Şifreniz düz metin olarak tutulmaz,
+                yalnızca geri döndürülemez bir özet (hash) biçiminde saklanır.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="mb-2 text-headline-sm text-on-surface">Mesajlarınız</h2>
+            <p class="text-body-md leading-relaxed text-on-surface-variant">
+                Gönderdiğiniz ve aldığınız mesajlar sistemin kendi veritabanında saklanır.
+                Mesajlar dış e-posta servislerine iletilmez, sistem dışına çıkmaz.
+                Bir mesajı yalnızca göndereni ve alıcısı görüntüleyebilir.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="mb-2 text-headline-sm text-on-surface">Çerezler</h2>
+            <p class="text-body-md leading-relaxed text-on-surface-variant">
+                Oturumunuzu açık tutmak için yalnızca bir kimlik doğrulama çerezi kullanılır.
+                Reklam veya takip amaçlı çerez kullanılmaz. Çıkış yaptığınızda bu çerez silinir.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="mb-2 text-headline-sm text-on-surface">Üçüncü Taraflar</h2>
+            <p class="text-body-md leading-relaxed text-on-surface-variant">
+                Verileriniz üçüncü taraflarla paylaşılmaz, satılmaz veya pazarlama amacıyla kullanılmaz.
+            </p>
+        </section>
+
+    </div>
+
+    <div class="mt-stack-lg">
+        <a asp-controller="Home" asp-action="Index"
+           class="inline-flex items-center gap-2 text-label-md text-primary transition-colors hover:text-secondary">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Ana sayfaya dön
+        </a>
+    </div>
+
+</div>
