@@ -6,6 +6,8 @@ Users register, verify their email address, and exchange messages with each othe
 
 This project is based on a case study from the training I received at M&Y Yazılım Eğitim Akademi, under the guidance of Murat Yücedağ and Erhan Gündüz. Rather than following the reference project line by line, I rebuilt it from scratch by reading and understanding it first, then extended it with features that were not part of the original.
 
+<img width="1808" height="850" alt="image" src="https://github.com/user-attachments/assets/a6ed0f7d-f9fe-41bc-acb1-ab0c53430f69" />
+
 ## Features
 
 ### Authentication and Account
@@ -75,6 +77,54 @@ The interface is built from ViewComponents rather than large monolithic views, s
 ### Setup
 
 ```bash
-git clone https://github.com/<user>/BanaOzelPostaKutusuServisi.git
+git clone https://github.com/m3hmtA-k3r/BanaOzelPostaKutusuServisi.git
 cd BanaOzelPostaKutusuServisi/PostaKutusuServisi
 npm install
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "server=.\SQLEXPRESS;database=PostaKutusuDb;integrated security=true;trustServerCertificate=true"
+dotnet ef database update
+dotnet run
+```
+
+`dotnet build` also builds the Tailwind stylesheet, which is why Node.js is required.
+
+### Email delivery
+
+`Program.cs` decides which mail service is used:
+
+- __`FileMailService`:__ writes every email to the `sent-emails` folder. No SMTP server is needed, which makes it the easiest choice for local development.
+- __`SmtpMailService`:__ sends real email. Set the SMTP values with User Secrets, never in `appsettings.json`:
+
+```bash
+dotnet user-secrets set "Smtp:User" "you@example.com"
+dotnet user-secrets set "Smtp:Password" "<app password>"
+dotnet user-secrets set "Smtp:From" "you@example.com"
+```
+
+### First administrator
+
+Register a normal account through the site, then set its email address as `AdminEmail`:
+
+```bash
+dotnet user-secrets set "AdminEmail" "you@example.com"
+```
+
+On the next start, that account is given the Admin role. After that, other admins can be appointed from the admin panel.
+
+## What I learned
+
+- __Hiding a link is not authorization.__ In the reference project, the message detail page loaded a message by its id alone. Anyone could read another user's message by changing the number in the URL. In my version, the controller checks that the signed-in user is the sender or the receiver before the message is shown.
+- __Deleting shared data needs two owners.__ A message belongs to two people. If the sender deletes it, the receiver should still have it. I added a separate deleted flag for each side, and the message disappears only from the view of the person who deleted it.
+- __Secrets do not belong in configuration files.__ An early version kept the SMTP password in `appsettings.json`. Before publishing, I revoked that password and moved all credentials to User Secrets. The repository now only shows the shape of the settings.
+
+## Status
+
+Complete. All 38 items of the use case document are implemented.
+
+## Acknowledgements
+
+Thanks to Murat Yücedağ and Erhan Gündüz at M&Y Yazılım Eğitim Akademi for the training and the case study this project grew out of.
+
+## About me
+
+Mehmet Asker, a self-taught full stack developer with a background in operations management. More projects: [github.com/m3hmtA-k3r](https://github.com/m3hmtA-k3r)
